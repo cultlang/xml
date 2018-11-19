@@ -1,0 +1,21 @@
+(ns/import "file:dlls.cult")
+(ns/import "builtin:cult/xml")
+
+(define test (xml/parse """
+    <?xml version="1.0"?>
+    <network>
+        <animation clip="idle" flags="loop" />
+        <animation clip="run" flags="loop" />
+        <animation clip="attack" />
+
+        <?include transitions.xml?>
+    </network>  
+"""))
+
+(list/fmap
+    (xml/children (xml/child test "network"))
+    
+    (function (xelm index)
+        (print (xml/attributes xelm))
+    )
+)
