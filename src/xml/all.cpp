@@ -40,10 +40,10 @@ CRAFT_TYPE_DEFINE(pugi::xml_node)
 	_.add<GraphPropertyName>("pugixml/xml_node");
 	_.add<GraphPropertyCppName>("pugi::xml_node");
 	_.use<PStringer>().singleton<FunctionalStringer>([](::craft::instance<pugi::xml_node> _this) {
-		return fmt::format("pugi::xml_node: {}", _this->name());
+		return fmt::format("pugi::xml_node: {}", _this->value());
 	});
 	_.use<PRepr>().singleton<FunctionalRepr>([](::craft::instance<pugi::xml_node> _this) {
-		return fmt::format("(pugi::xml_node)");
+		return fmt::format("(pugi::xml_node {})", _this->value());
 	});
 }
 
@@ -61,6 +61,7 @@ CRAFT_TYPE_DEFINE(pugi::xml_attribute)
 
 
 typedef instance<std::string> tstr;
+typedef instance<uint64_t> tu64;
 
 void cultlang::pugixml::make_pugixml_bindings(craft::instance<craft::lisp::Module> ret)
 {
@@ -101,9 +102,22 @@ void cultlang::pugixml::make_pugixml_bindings(craft::instance<craft::lisp::Modul
         return instance<lisp::library::List>::make(res);
     });
 
+    lMM(HtP"/count", [](xnode d) { 
+        uint64_t res = 0;
+        for(auto i : d->children())
+        {
+            res++;
+        }
+        return tu64::make(res);
+     });
+
+	lMM(HtP"/value", [](xnode d) { return tstr::make(d->value()); });
+    lMM(HtP"/value", [](xattr d) { return tstr::make(d->value()); });
+
     lMM(HtP"/child", [](xdoc d, tstr s) { return xnode::make(d->child(s->c_str())); });
     lMM(HtP"/child", [](xnode d, tstr s) { return xnode::make(d->child(s->c_str())); });
 
+    lMM(HtP"/childValue", [](xnode d) { return tstr::make(d->child_value()); });
 
     lMM(HtP"/children", [](xnode d) { 
         std::vector<instance<>> res;
@@ -136,8 +150,6 @@ void cultlang::pugixml::make_pugixml_bindings(craft::instance<craft::lisp::Modul
 
         return instance<lisp::library::List>::make(res);
     });
-    
-    
     //lMM(HtP"/attribute", [](xnode s, tstr a) {return xattr::make(s->attribute(a->c_str()));}
 
 
