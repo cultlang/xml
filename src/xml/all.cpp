@@ -155,7 +155,7 @@ void cultlang::pugixml::make_pugixml_bindings(craft::instance<craft::lisp::Modul
 
 }
 
-BuiltinModuleDescription cultlang::pugixml::BuiltinPugixml("cult/xml", cultlang::pugixml::make_pugixml_bindings);
+BuiltinModuleDescription cultlang::pugixml::BuiltinPugixml("extensions/xml", cultlang::pugixml::make_pugixml_bindings);
 
 
 #include "types/dll_entry.inc"
